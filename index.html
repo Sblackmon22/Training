@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Workout Tracker</title>
+    <style>
+        :root {
+            --bg-color: #0b0f19;
+            --card-bg: #1e293b;
+            --accent-color: #3b82f6;
+            --accent-gradient: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
+            --success-color: #10b981;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            padding: 16px;
+            padding-bottom: 40px;
+        }
+
+        /* Utility Classes */
+        .hidden { display: none !important; }
+
+        /* Header / Navigation */
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+            padding-top: 8px;
+        }
+
+        h1 {
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .btn-back {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        /* Home Screen Menu */
+        .menu-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+        }
+
+        .menu-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            padding: 24px;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: transform 0.1s ease, background-color 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .menu-card:active {
+            transform: scale(0.98);
+            background: #25334d;
+        }
+
+        .menu-card h2 {
+            font-size: 20px;
+            margin-bottom: 6px;
+        }
+
+        .menu-card p {
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        /* Workout Sections */
+        .section-subtitle {
+            color: var(--text-muted);
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 20px 0 10px 4px;
+            font-weight: 700;
+        }
+
+        /* Exercise Items / Cards */
+        .exercise-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .exercise-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .exercise-title {
+            font-size: 17px;
+            font-weight: 600;
+        }
+
+        .exercise-meta {
+            font-size: 12px;
+            background: rgba(59, 130, 246, 0.15);
+            color: #60a5fa;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-weight: 600;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+
+        .exercise-details {
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+
+        .exercise-details strong {
+            color: #cbd5e1;
+        }
+
+        /* Specialized list styling for simple lists */
+        .simple-list-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+            margin-bottom: 16px;
+        }
+
+        .simple-item {
+            padding: 16px;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 16px;
+        }
+
+        .simple-item:last-child {
+            border-bottom: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="view-home">
+        <header>
+            <h1>Workout Tracker</h1>
+        </header>
+        <div class="menu-grid">
+            <div class="menu-card" onclick="switchView('view-stretching')">
+                <h2>Stretching & Warmup</h2>
+                <p>Dynamic Warmup & Static Cooldown</p>
+            </div>
+            <div class="menu-card" onclick="switchView('view-cali')">
+                <h2>Calisthenics & Plyometrics</h2>
+                <p>Progression & Skill Development</p>
+            </div>
+            <div class="menu-card" onclick="switchView('view-push')">
+                <h2>Lifting: Push & Legs</h2>
+                <p>Heavy Compounds & Isolation Burners</p>
+            </div>
+            <div class="menu-card" onclick="switchView('view-pull')">
+                <h2>Lifting: Pull & Legs</h2>
+                <p>Heavy Compounds & Isolation Burners</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="view-stretching" class="hidden">
+        <header>
+            <button class="btn-back" onclick="switchView('view-home')">← Back</button>
+            <h1>Stretching</h1>
+        </header>
+        
+        <div class="section-subtitle">Dynamic Warmup</div>
+        <div class="simple-list-card">
+            <div class="simple-item">Walk / Jog / Run / Jump Rope [cite: 2]</div>
+            <div class="simple-item">Circles: Neck, Wrist, Arms, Ankles [cite: 3]</div>
+            <div class="simple-item">Leg Swings / Hip Rotations [cite: 4]</div>
+            <div class="simple-item">Kneeling Kick-Backs [cite: 5]</div>
+            <div class="simple-item">Wall Gumbis [cite: 6]</div>
+            <div class="simple-item">Split / Cossack Squat flow [cite: 7]</div>
+            <div class="simple-item">Forward Fold to Squat flow [cite: 8]</div>
+            <div class="simple-item">90/90 flow [cite: 9]</div>
+        </div>
+
+        <div class="section-subtitle">Static Cooldown</div>
+        <div class="simple-list-card">
+            <div class="simple-item">Forward Fold [cite: 11]</div>
+            <div class="simple-item">Middle Splits [cite: 12]</div>
+            <div class="simple-item">Front Splits [cite: 13]</div>
+            <div class="simple-item">Butterfly [cite: 14]</div>
+            <div class="simple-item">Tricep Pull-Backs [cite: 15]</div>
+            <div class="simple-item">Wall flow: Bicep, Back, Wrist, Forearm [cite: 16]</div>
+            <div class="simple-item">Streamline [cite: 17]</div>
+            <div class="simple-item">Seiza, on toes / on top of feet [cite: 18]</div>
+            <div class="simple-item">Wall flow: Calves, Ankles [cite: 19]</div>
+        </div>
+    </div>
+
+    <div id="view-cali" class="hidden">
+        <header>
+            <button class="btn-back" onclick="switchView('view-home')">← Back</button>
+            <h1>Cali x Plyo</h1>
+        </header>
+
+        <div class="section-subtitle">Handstand & Upper Body Pressing</div>
+        <div class="exercise-card">
+            <div class="exercise-header">
+                <span class="exercise-title">Kick Up [cite: 20]</span>
+                <span class="exercise-meta">Handstand</span>
+            </div>
+            <div class="exercise-details"><strong>Progression 1:</strong> Wall Assisted [cite: 20]</div>
+        </div>
+        <div class="exercise-card">
+            <div class="exercise-header">
+                <span class="exercise-title">Press Up [cite: 20]</span>
+                <span class="exercise-meta">Handstand</span>
+            </div>
+            <div class="exercise-details"><strong>Progression 1:</strong> Pike Push up [cite: 20]</div>
+        </div>
+        <div class="exercise-card">
+            <div class="exercise-header">
+                <span class="exercise-title">Straight Arm Press [cite: 20]</span>
+                <span class="exercise-meta">Handstand</span>
+            </div>
+            <div class="exercise-details"><strong>Progression 1:</strong> Floaters | <strong>Progression 2:</strong> Negatives [cite: 20]</div>
+        </div>
+        <div class="exercise-card">
+            <div class="exercise-header">
+                <span class="exercise-title">HSPU [cite: 20]</span>
+                <span class="exercise-meta">Handstand</span>
+            </div>
+            <div class="exercise-details"><strong>Progression 1:</strong> Wall Assisted [cite: 20]</div>
+        </div>
+        <div class="exercise-card">
+            <div class="exercise-header">
+                <span class="exercise-title">OAH [cite: 20]</span>
+                <span class="exercise-meta">Handstand</span>
+            </div>
+            <div class="exercise-details"><strong>Progression 1:</strong> Wall Assisted | <strong>Progression 2:</strong> Box Assisted [cite: 20]</div>
+        </div>
+        <div class="exercise-card">
+            <div class="exercise-header">
+                <span class="exercise-title">Crow Pose Press [cite: 20]</span>
+                <span class="exercise-meta">Handstand</span>
+            </div>
+        </div>
+        <div class="exercise-card">
+            <div class="exercise-header">
+                <span class="exercise-title">Planche [cite: 20]</span>
+                <span class="exercise-meta">Handstand</span>
+            </div>
+            <div class="exercise-details"><strong>Progression 1:</strong> Tuck | <strong>Progression 2:</strong> Straddle / 1 leg tuck [cite: 20]</div>
+        </div>
+
+        <div class="section-subtitle">Plyometrics & Power</div>
+        <div class="exercise-card">
+            <div class="exercise-header">
+                <span class="exercise-title">Pogos + Box Jump [cite: 20]</span>
+                <span class="exercise-meta">Plyos</span>
+            </div>
+        </div>
+        <div class="simple-list-card">
+            <div class="simple-item">SL Pogo + Box Jump [cite: 20]</div>
+            <div class="simple-item">Bulgarian Jumps [cite: 20]</div>
+            <div class="simple-item">Up and Overs [cite: 20]</div>
+            <div class="simple-item">Depth Jump + High Jump [cite: 20]</div>
+        </div>
+
+        <div class="section-subtitle">Bar Mechanics</div>
+        <div class="exercise-card">
+            <div class="exercise-header">
+                <span class="exercise-title">Muscle Up [cite: 20]</span>
+                <span class="exercise-meta">Bar</span>
+            </div>
+            <div class="exercise-details"><strong>Progression 1:</strong> Pull up / Dip | <strong>Progression 2:</strong> Kip Up [cite: 20]</div>
+        </div>
+        <div class="simple-list-card">
+            <div class="simple-item">Front Lever [cite: 20]</div>
+            <div class="simple-item">OAPU [cite: 20]</div>
+        </div>
+
+        <div class="section-subtitle">Pistol / Single Leg Strength</div>
+        <div class="simple-list-card">
+            <div class="simple-item">Pistol Squat [cite: 20]</div>
+            <div class="simple-item">Dragon Squat [cite: 20]</div>
+            <div class="simple-item">Compass Taps [cite: 20]</div>
+        </div>
+    </div>
+
+    <div id="view-push" class="hidden">
+        <header>
+            <button class="btn-back" onclick="switchView('view-home')">← Back</button>
+            <h1>Push & Legs</h1>
+        </header>
+
+        <div class="section-subtitle">Heavy Compounds (4 x 4)</div>
+        <div class="exercise-card">
+            <div class="exercise-header">
+                <span class="exercise-title">Bench Press [cite: 21]</span>
+                <span class="exercise-meta">Barbell</span>
+            </div>
+            <div class="exercise-details">
+                <div><strong>Primary:</strong> Pecs [cite: 21]</div>
+                <div><strong>Secondary:</strong> Anterior delts, Triceps [cite: 21]</div>
+                <div><strong>Stabilizers:</strong> Rotator cuff, Serratus, Core [cite: 21]</div>
+            </div>
+        </div>
+        <div class="exercise-card">
+            <div class="exercise-header">
+                <span class="exercise-title">Back Squat [cite: 21]</span>
+                <span class="exercise-meta">Barbell</span>
+            </div>
+            <div class="exercise-details">
+                <div><strong>Primary:</strong> Quads, Glutes [cite: 21]</div>
+                <div><strong>Secondary:</strong> Hamstrings, Adductors, Sacrospinalis [cite: 21]</div>
+                <div><strong>Stabilizers:</strong> Core, Calves, Traps, Upper back [cite: 21]</div>
+            </div>
+        </div>
+
+        <div class="section-subtitle">Landmine Complex (3 x 7)</div>
+        <div class="exercise-card">
+            <div class="exercise-header">
+                <span class="exercise-title">Z Press [cite: 21]</span>
+                <span class="exercise-meta">Landmine</span>
+            </div>
+            <div class="exercise-details">
+                <div><strong>Primary:</strong> Delts, Triceps [cite: 21]</div>
+                <div><strong>Secondary:</strong> Triceps, Upper pecs [cite: 21]</div>
+                <div><strong>Stabilizers:</strong> Abs, Upper traps [cite: 21]</div>
+            </div>
+        </div>
+        <div class="exercise-card">
+            <div class="exercise-header">
+                <span class="exercise-title">Lateral Squat [cite: 21]</span>
+                <span class="exercise-meta">Landmine</span>
+            </div>
+            <div class="exercise-details">
+                <div><strong>Primary:</strong> Adductors, Quads, Glutes [cite: 21]</div>
+                <div><strong>Secondary:</strong> Glutes, Hamstrings [cite: 21]</div>
+                <div><strong>Stabilizers:</strong> Core, Calves, Hip abductors [cite: 21]</div>
+            </div>
+        </div>
+        <div class="exercise-card">
+            <div class="exercise-header">
+                <span class="exercise-title">Oblique Twist [cite: 21]</span>
+                <span class="exercise-meta">Landmine</span>
+            </div>
+            <div class="exercise-details">
+                <div><strong>Primary:</strong> Obliques [cite: 21]</div>
+                <div><strong>Secondary:</strong> Abs, Lats, Glutes, Hip rotators [cite: 21]</div>
+                <div><strong>Stabilizers:</strong> Sacrospinalis [cite: 21]</div>
+            </div>
+        </div>
+
+        <div class="section-subtitle">Isolation Burners (3 x 12)</div>
+        <div class="exercise-card">
+            <div class="exercise-header">
+                <span class="exercise-title">Incline Press [cite: 21]</span>
+                <span class="exercise-meta">Dumbbell</span>
+            </div>
+            <div class="exercise-details">
+                <div><strong>Primary:</strong> Pecs | <strong>Secondary:</strong> Delts, Triceps [cite: 21]</div>
+            </div>
+        </div>
+        <div class="exercise-card">
+            <div class="exercise-header">
+                <span class="exercise-title">Chest Fly [cite: 21]</span>
+                <span class="exercise-meta">Dumbbell</span>
+            </div>
+            <div class="exercise-details">
+                <div><strong>Primary:</strong> Pecs | <strong>Secondary:</strong> Delts [cite: 21]</div>
+            </div>
+        </div>
+        <div class="exercise-card">
+            <div class="exercise-header">
+                <span class="exercise-title">Lateral Raise [cite: 21]</span>
+                <span class="exercise-meta">Dumbbell</span>
+            </div>
+            <div class="exercise-details">
+                <div><strong>Primary:</strong> Delts | <strong>Secondary:</strong> Delts, Upper Traps [cite: 21]</div>
+            </div>
+        </div>
+        <div class="exercise-card">
+            <div class="exercise-header">
+                <span class="exercise-title">Tricep Pushdown [cite: 21]</span>
+                <span class="exercise-meta">Cable</span>
+            </div>
+            <div class="exercise-details">
+                <div><strong>Primary:</strong> Triceps [cite: 21]</div>
+            </div>
+        </div>
+        <div class="exercise-card">
+            <div class="exercise-header">
+                <span class="exercise-title">Leg Press [cite: 21]</span>
+                <span class="exercise-meta">Machine</span>
+            </div>
+            <div class="exercise-details">
+                <div><strong>Primary:</strong> Quads, Glutes | <strong>Secondary:</strong> Hamstrings, Adductors, Calves [cite: 21]</div>
+            </div>
+        </div>
+        <div class="exercise-card">
+            <div class="exercise-header">
+                <span class="exercise-title">Single-Leg Calf Raise [cite: 21]</span>
+                <span class="exercise-meta">Dumbbell</span>
+            </div>
+            <div class="exercise-details">
+                <div><strong>Primary:</strong> Gastrocnemius | <strong>Secondary:</strong> Soleus [cite: 21]</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="view-pull" class="hidden">
+        <header>
+            <button class="btn-back" onclick="switchView('view-home')">← Back</button>
+            <h1>Pull & Legs</h1>
+        </header>
+
+        <div class="section-subtitle">Heavy Compounds (4 x 4)</div>
+        <div class="exercise-card">
+            <div class="exercise-header">
+                <span class="exercise-title">Deadlift [cite: 22]</span>
+                <span class="exercise-meta">Barbell</span>
+            </div>
+            <div class="exercise-details">
+                <div><strong>Primary:</strong> Hamstrings, Glutes, Sacrospinalis [cite: 22]</div>
+                <div><strong>Secondary:</strong> Lats, Traps, Quads [cite: 22]</div>
+                <div><strong>Stabilizers:</strong> Core, Forearms, Rotator cuff [cite: 22]</div>
+            </div>
+        </div>
+        <div class="exercise-card">
+            <div class="exercise-header">
+                <span class="exercise-title">Pull-up [cite: 22]</span>
+                <span class="exercise-meta">Plate</span>
+            </div>
+            <div class="exercise-details">
+                <div><strong>Primary:</strong> Lats, Traps [cite: 22]</div>
+                <div><strong>Secondary:</strong> Biceps, Delts [cite: 22]</div>
+                <div><strong>Stabilizers:</strong> Core, Rotator cuff [cite: 22]</div>
+            </div>
+        </div>
+
+        <div class="section-subtitle">Landmine Complex (3 x 7)</div>
+        <div class="exercise-card">
+            <div class="exercise-header">
+                <span class="exercise-title">Bent-over Row [cite: 22]</span>
+                <span class="exercise-meta">Landmine</span>
+            </div>
+            <div class="exercise-details">
+                <div><strong>Primary:</strong> Lats, Traps | <strong>Secondary:</strong> Delts, Biceps, Sacrospinalis [cite: 22]</div>
+            </div>
+        </div>
+        <div class="exercise-card">
+            <div class="exercise-header">
+                <span class="exercise-title">Single-leg RDL [cite: 22]</span>
+                <span class="exercise-meta">Landmine</span>
+            </div>
+            <div class="exercise-details">
+                <div><strong>Primary:</strong> Hamstrings, Glutes | <strong>Secondary:</strong> Sacrospinalis, Adductors [cite: 22]</div>
+            </div>
+        </div>
+        <div class="exercise-card">
+            <div class="exercise-header">
+                <span class="exercise-title">Hack Squat [cite: 22]</span>
+                <span class="exercise-meta">Landmine</span>
+            </div>
+            <div class="exercise-details">
+                <div><strong>Primary:</strong> Quads | <strong>Secondary:</strong> Glutes, Hamstrings, Sacrospinalis [cite: 22]</div>
+            </div>
+        </div>
+
+        <div class="section-subtitle">Isolation Burners (3 x 12)</div>
+        <div class="exercise-card">
+            <div class="exercise-header">
+                <span class="exercise-title">Lat Pulldown [cite: 22]</span>
+                <span class="exercise-meta">Cable</span>
+            </div>
+            <div class="exercise-details"><strong>Primary:</strong> Lats dorsi [cite: 22]</div>
+        </div>
+        <div class="exercise-card">
+            <div class="exercise-header">
+                <span class="exercise-title">Dual-grip Cable Row [cite: 22]</span>
+                <span class="exercise-meta">Cable</span>
+            </div>
+            <div class="exercise-details"><strong>Primary:</strong> Traps, Latis [cite: 22]</div>
+        </div>
+        <div class="exercise-card">
+            <div class="exercise-header">
+                <span class="exercise-title">Bicep Curl [cite: 22]</span>
+                <span class="exercise-meta">Dumbbell</span>
+            </div>
+            <div class="exercise-details"><strong>Primary:</strong> Biceps [cite: 22]</div>
+        </div>
+        <div class="exercise-card">
+            <div class="exercise-header">
+                <span class="exercise-title">Underhand Front Raise [cite: 22]</span>
+                <span class="exercise-meta">Dumbbell</span>
+            </div>
+            <div class="exercise-details"><strong>Primary:</strong> Delts, Upper pecs [cite: 22]</div>
+        </div>
+        <div class="exercise-card">
+            <div class="exercise-header">
+                <span class="exercise-title">Hammer Curl [cite: 22]</span>
+                <span class="exercise-meta">Cable</span>
+            </div>
+            <div class="exercise-details"><strong>Primary:</strong> Biceps [cite: 22]</div>
+        </div>
+        <div class="exercise-card">
+            <div class="exercise-header">
+                <span class="exercise-title">Single-leg March [cite: 22]</span>
+                <span class="exercise-meta">Cable</span>
+            </div>
+            <div class="exercise-details"><strong>Primary:</strong> Hip flexors, Quads [cite: 22]</div>
+        </div>
+        <div class="exercise-card">
+            <div class="exercise-header">
+                <span class="exercise-title">Leg Extension [cite: 22]</span>
+                <span class="exercise-meta">Machine</span>
+            </div>
+            <div class="exercise-details"><strong>Primary:</strong> Quads [cite: 22]</div>
+        </div>
+    </div>
+
+    <script>
+        function switchView(viewId) {
+            // Hide all views
+            document.getElementById('view-home').classList.add('hidden');
+            document.getElementById('view-stretching').classList.add('hidden');
+            document.getElementById('view-cali').classList.add('hidden');
+            document.getElementById('view-push').classList.add('hidden');
+            document.getElementById('view-pull').classList.add('hidden');
+            
+            // Show selected view
+            document.getElementById(viewId).classList.remove('hidden');
+            
+            // Smoothly scroll back to top of page on view change
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
