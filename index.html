@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>GYM</title>
+    <style>
+        :root {
+            --bg-color: #0b0f19;
+            --card-bg: #1e293b;
+            --accent-color: #3b82f6;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
+            --input-bg: #0f172a;
+            --light-blue: #60a5fa;
+            --dark-purple: #4c1d95;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            padding: 16px;
+            padding-bottom: 60px;
+        }
+
+        .hidden { display: none !important; }
+
+        /* Header / Navigation */
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+            padding-top: 8px;
+        }
+
+        h1 {
+            font-size: 28px;
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+
+        .btn-back {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        /* Home Screen Menu */
+        .menu-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+        }
+
+        .menu-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            padding: 24px;
+            border-radius: 16px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .menu-card h2 {
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        /* Premium Highlight Animation */
+        @keyframes tapFlash {
+            0% {
+                background-color: var(--card-bg);
+                box-shadow: inset 0 0 0 0 var(--light-blue);
+            }
+            30% {
+                background-color: var(--dark-purple);
+                box-shadow: inset 0 0 15px 2px var(--light-blue);
+                border-color: var(--light-blue);
+            }
+            100% {
+                background-color: var(--card-bg);
+                box-shadow: inset 0 0 0 0 var(--light-blue);
+            }
+        }
+
+        .tapped {
+            animation: tapFlash 0.45s ease-out;
+        }
+
+        /* Workout Sections */
+        .section-subtitle {
+            color: var(--text-muted);
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 24px 0 10px 4px;
+            font-weight: 700;
+        }
+
+        /* Interactive Exercise Cards */
+        .exercise-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+
+        .exercise-card.active-card {
+            border-color: var(--accent-color);
+        }
+
+        .exercise-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+
+        .exercise-title {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .exercise-meta {
+            font-size: 11px;
+            background: rgba(59, 130, 246, 0.15);
+            color: #60a5fa;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-weight: 600;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+
+        .exercise-details {
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.4;
+            padding-top: 4px;
+            border-top: 1px solid #2d3748;
+            margin-top: 4px;
+        }
+
+        .exercise-details strong {
+            color: #cbd5e1;
+        }
+
+        /* Input Panel */
+        .input-panel {
+            margin-top: 8px;
+            padding-top: 12px;
+            border-top: 1px dashed var(--border-color);
+            display: none;
+        }
+
+        .exercise-card.active-card .input-panel {
+            display: block;
+        }
+
+        .note-textarea {
+            width: 100%;
+            background: var(--input-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-main);
+            padding: 10px;
+            font-size: 14px;
+            resize: none;
+            outline: none;
+        }
+
+        .note-textarea:focus {
+            border-color: var(--accent-color);
+        }
+
+        .saved-badge {
+            font-size: 11px;
+            color: #10b981;
+            display: none;
+            align-items: center;
+            gap: 4px;
+            margin-top: 4px;
+            font-weight: 600;
+        }
+
+        /* Reset Button */
+        .btn-clear {
+            width: 100%;
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            margin-top: 24px;
+            cursor: pointer;
+        }
+
+        /* Unnecessary Info Content Styles */
+        .info-block {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            padding: 16px;
+            border-radius: 12px;
+            margin-bottom: 16px;
+        }
+        .info-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--light-blue);
+            margin-bottom: 8px;
+        }
+        .info-text {
+            font-size: 14px;
+            color: #cbd5e1;
+            line-height: 1.5;
+        }
+        .info-text ul {
+            margin-left: 20px;
+            margin-top: 6px;
+        }
+        .info-text li {
+            margin-bottom: 4px;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="view-home">
+        <header>
+            <h1>GYM</h1>
+        </header>
+        <div class="menu-grid">
+            <div class="menu-card" onclick="handleMenuClick(this, 'view-stretching')">
+                <h2>Stretch</h2>
+            </div>
+            <div class="menu-card" onclick="handleMenuClick(this, 'view-cali')">
+                <h2>Cali x Plyo</h2>
+            </div>
+            <div class="menu-card" onclick="handleMenuClick(this, 'view-push')">
+                <h2>Push x Legs</h2>
+            </div>
+            <div class="menu-card" onclick="handleMenuClick(this, 'view-pull')">
+                <h2>Pull x Legs</h2>
+            </div>
+            <div class="menu-card" onclick="handleMenuClick(this, 'view-info')" style="border-style: dashed;">
+                <h2>Unnecessary Info</h2>
+            </div>
+        </div>
+    </div>
+
+    <div id="view-stretching" class="hidden">
+        <header>
+            <button class="btn-back" onclick="switchView('view-home')">← Back</button>
+            <h1>Stretch</h1>
+        </header>
+        
+        <div class="section-subtitle">Dynamic Warmup</div>
+        <div class="exercise-card" onclick="toggleCard(this)">
+            <div class="exercise-header"><span class="exercise-title">Walk / Jog / Run / Jump Rope</span></div>
+            <div class="input-panel" onclick="event.stopPropagation();">
+                <textarea class="note-textarea" rows="2" placeholder="Sets, reps, or notes..." oninput="saveNote('stretch_1', this.value)"></textarea>
+                <div class="saved-badge" id="badge_stretch_1">✓ Saved</div>
+            </div>
+        </div>
+        <div class="exercise-card" onclick="toggleCard(this)">
+            <div class="exercise-header"><span class="exercise-title">Circles: Neck, Wrist, Arms, Ankles</span></div>
+            <div class="input-panel" onclick="event.stopPropagation();">
+                <textarea class="note-textarea" rows="2" placeholder="Sets, reps, or notes..." oninput="saveNote('stretch_2', this.value)"></textarea>
+                <div class="saved-badge" id="badge_stretch_2">✓ Saved</div>
+            </div>
+        </div>
+        <div class="exercise-card" onclick="toggleCard(this)">
+            <div class="exercise-header"><span class="exercise-title">Leg Swings / Hip Rotations</span></div>
+            <div class="input-panel" onclick="event.stopPropagation();">
+                <textarea class="note-textarea" rows="2" placeholder="Sets, reps, or notes..." oninput="saveNote('stretch_3', this.value)"></textarea>
+                <div class="saved-badge" id="badge_stretch_3">✓ Saved</div>
+            </div>
+        </div>
+        <div class="exercise-card" onclick="toggleCard(this)">
+            <div class="exercise-header"><span class="exercise-title">Kneeling Kick-Backs</span></div>
+            <div class="input-panel" onclick="event.stopPropagation();">
+                <textarea class="note-textarea" rows="2" placeholder="Sets, reps, or notes..." oninput="saveNote('stretch_4', this.value)"></textarea>
+                <div class="saved-badge" id="badge_stretch_4">✓ Saved</div>
+            </div>
+        </div>
+        <div class="exercise-card" onclick="toggleCard(this)">
+            <div class="exercise-header"><span class="exercise-title">Wall Gumbis</span></div>
+            <div class="input-panel" onclick="event.stopPropagation();">
+                <textarea class="note-textarea" rows="2" placeholder="Sets, reps, or notes..." oninput="saveNote('stretch_5', this.value)"></textarea>
+                <div class="saved-badge" id="badge_stretch_5">✓ Saved</div>
+            </div>
+        </div>
+        <div class="exercise-card" onclick="toggleCard(this)">
+            <div class="exercise-header"><span class="exercise-title">Split / Cossack Squat flow</span></div>
+            <div class="input-panel" onclick="event.stopPropagation();">
+                <textarea class="note-textarea" rows="2" placeholder="Sets, reps, or notes..." oninput="saveNote('stretch_6', this.value)"></textarea>
+                <div class="saved-badge" id="badge_stretch_6">✓ Saved</div>
+            </div>
+        </div>
+        <div class="exercise-card" onclick="toggleCard(this)">
+            <div class="exercise-header"><span class="exercise-title">Forward Fold to Squat flow</span></div>
+            <div class="input-panel" onclick="event.stopPropagation();">
+                <textarea class="note-textarea" rows="2" placeholder="Sets, reps, or notes..." oninput="saveNote('stretch_7', this.value)"></textarea>
+                <div class="saved-badge" id="badge_stretch_7">✓ Saved</div>
+            </div>
+        </div>
+        <div class="exercise-card" onclick="toggleCard(this)">
+            <div class="exercise-header"><span class="exercise-title">90 90 flow</span></div>
+            <div class="input-panel" onclick="event.stopPropagation();">
+                <textarea class="note-textarea" rows="2" placeholder="Sets, reps, or notes..." oninput="saveNote('stretch_8', this.value)"></textarea>
+                <div class="saved-badge" id="badge_stretch_8">✓ Saved</div>
+            </div>
+        </div>
+
+        <div class="section-subtitle">Static Cooldown</div>
+        <div class="exercise-card" onclick="toggleCard(this)">
+            <div class="exercise-header"><span class="exercise-title">Forward Fold</span></div>
+            <div class="input-panel" onclick="event.stopPropagation();">
+                <textarea class="note-textarea" rows="2" placeholder="Notes..." oninput="saveNote('stretch_9', this.value)"></textarea>
+                <div class="saved-badge" id="badge_stretch_9">✓ Saved</div>
+            </div>
+        </div>
+        <div class="exercise-card" onclick="toggleCard(this)">
+            <div class="exercise-header"><span class="exercise-title">Middle Splits</span></div>
+            <div class="input-panel" onclick="event.stopPropagation();">
+                <textarea class="note-textarea" rows="2" placeholder="Notes..." oninput="saveNote('stretch_10', this.value)"></textarea>
+                <div class="saved-badge" id="badge_stretch_10">✓ Saved</div>
+            </div>
+        </div>
+        <div class="exercise-card" onclick="toggleCard(this)">
+            <div class="exercise-header"><span class="exercise-title">Front Splits</span></div>
+            <div class="input-panel" onclick="event.stopPropagation();">
+                <textarea class="note-textarea" rows="2" placeholder="Notes..." oninput="saveNote('stretch_11', this.value)"></textarea>
+                <div class="saved-badge" id="badge_stretch_11">✓ Saved</div>
+            </div>
+        </div>
+        <div class="exercise-card" onclick="toggleCard(this)">
+            <div class="exercise-header"><span class="exercise-title">Butterfly</span></div>
+            <div class="input-panel" onclick="event.stopPropagation();">
+                <textarea class="note-textarea" rows="2" placeholder="Notes..." oninput="saveNote('stretch_12', this.value)"></textarea>
+                <div class="saved-badge" id="badge_stretch_12">✓ Saved</div>
+            </div>
+        </div>
+        <div class="exercise-card" onclick="toggleCard(this)">
+            <div class="exercise-header"><span class="exercise-title">Tricep Pull-Backs</span></div>
+            <div class="input-panel" onclick="event.stopPropagation();">
+                <textarea class="note-textarea" rows="2" placeholder="Notes..." oninput="saveNote('stretch_13', this.value)"></textarea>
+                <div class="saved-badge" id="badge_stretch_13">✓ Saved</div>
+            </div>
+        </div>
+        <div class="exercise-card" onclick="toggleCard(this)">
+            <div class="exercise-header"><span class="exercise-title">Wall flow: Bicep, Back, Wrist, Forearm</span></div>
+            <div class="input-panel" onclick="event.stopPropagation();">
+                <textarea class="note-textarea" rows="2" placeholder="Notes..." oninput="saveNote('stretch_14', this.value)"></textarea>
+                <div class="saved-badge" id="badge_stretch_14">✓ Saved</div>
+            </div>
+        </div>
+        <div class="exercise-card" onclick="toggleCard(this)">
+            <div class="exercise-header"><span class="exercise-title">Streamline</span></div>
+            <div class="input-panel" onclick="event.stopPropagation();">
+                <textarea class="note-textarea" rows="2" placeholder="Notes..." oninput="saveNote('stretch_15', this.value)"></textarea>
+                <div class="saved-badge" id="badge_stretch_15">✓ Saved</div>
+            </div>
+        </div>
+        <div class="exercise-card" onclick="toggleCard(this)">
+            <div class="exercise-header"><span class="exercise-title">Seiza, on toes / on top of feet</span></div>
+            <div class="input-panel" onclick="event.stopPropagation();">
+                <textarea class="note-textarea" rows="2" placeholder="Notes..." oninput="saveNote('stretch_16', this.value)"></textarea>
+                <div class="saved-badge" id="badge_stretch_16">✓ Saved</div>
+            </div>
+        </div>
+        <div class="exercise-card" onclick="toggleCard(this)">
+            <div class="exercise-header"><span class="exercise-title">Wall flow: Calves, Ankles</span></div>
+            <div class="input-panel" onclick="event.stopPropagation();">
+                <textarea class="note-textarea" rows="2" placeholder="Notes..." oninput="saveNote('stretch_17', this.value)"></textarea>
+                <div class="saved-badge" id="badge_stretch_17">✓ Saved</div>
+            </div>
+        </div>
+
+        <button class="btn-clear" onclick="clearAllNotes()">Reset All Notes</button>
+    </div>
+
+    <div id="view-cali" class="hidden">
+        <header>
+            <button class="btn-back" onclick="switchView('view-home')">← Back</button>
+            <h1>Cali x Plyo</h1>
+        </header>
+
+        <div class="section-subtitle">Handstand & Upper Body Pressing</div>
+        <div class="exercise-card" onclick="toggleCard(this)">
+            <div class="exercise-header"><span class="exercise-title">Kick Up</span><span class="exercise-meta">Handstand</span></div>
+            <div class="exercise-details"><strong>Progression 1:</strong> Wall Assisted</div>
+            <div class="input-panel" onclick="event.stopPropagation();">
+                <textarea class="note-textarea" rows="2" placeholder="Tracking details..." oninput="saveNote('cali_1', this.value)"></textarea>
+                <div class="saved-badge" id="badge_cali_1">✓ Saved</div>
+            </div>
+        </div>
+        <div class="exercise-card" onclick="toggleCard(this)">
+            <div class="exercise-header"><span class="exercise-title">Press Up</span><span class="exercise-meta">Handstand</span></div>
+            <div class="exercise-details"><strong>Progression 1:</strong> Pike Push up</div>
+            <div class="input-panel" onclick="event.stopPropagation();">
+                <textarea class="note-textarea" rows="2" placeholder="Tracking details..." oninput="saveNote('cali_2', this.value)"></textarea>
+                <div class="saved-badge" id="badge_cali_2">✓ Saved</div>
+            </div>
+        </div>
+        <div class="exercise-card" onclick="toggleCard(this)">
+            <div class="exercise-header"><span class="exercise-title">Straight Arm Press</span><span class="exercise-meta">Handstand</span></div>
+            <div class="exercise-details"><strong>Progression 1:</strong> Floaters | <strong>Progression 2:</strong> Negatives</div>
+            <div class="input-panel" onclick="event.stopPropagation();">
+                <textarea class="note-textarea" rows="2" placeholder="Tracking details..." oninput="saveNote('cali_3', this.value)"></textarea>
+                <div class="saved-badge" id="badge_cali_3">✓ Saved</div>
+            </div>
+        </div>
+        <div class="exercise-card" onclick="toggleCard(this)">
+            <div class="exercise-header"><span class="exercise-title">HSPU</span><span class="exercise-meta">Handstand</span></div>
+            <div class="exercise-details"><strong>Progression 1:</strong> Wall Assisted</div>
+            <div class="input-panel" onclick="event.stopPropagation();">
+                <textarea class="note-textarea" rows="2" placeholder="Tracking details..." oninput="saveNote('cali_4', this.value)"></textarea>
+                <div class="saved-badge" id="badge_cali_4">✓ Saved</div>
+            </div>
+        </div>
+        <div class="exercise-card" onclick="toggleCard(this)">
+            <div class="exercise-header"><span class="exercise-title">OAH</span><span class="exercise-meta">Handstand</span></div>
+            <div class="exercise-details"><strong>Progression 1:</strong> Wall Assisted | <strong>Progression 2:</strong> Box Assisted</div>
+            <div class="input-panel" onclick="event.stopPropagation();">
+                <textarea class="note-textarea" rows="2" placeholder="Tracking details..." oninput="saveNote('cali_5', this.value)"></textarea>
+                <div class="saved-badge" id="badge_cali_5">✓ Saved</div>
+            </div>
+        </div>
+        <div class="exercise-card" onclick="toggleCard(this)">
+            <div class="exercise-header"><span class="exercise-title">Crow Pose Press</span><span class="exercise-meta">Handstand</span></div>
+            <div class="input-panel" onclick="event.stopPropagation();">
+                <textarea class="note-textarea" rows="2" placeholder="Tracking details..." oninput="saveNote('cali_6', this.value)"></textarea>
+                <div class="saved-badge" id="badge_cali_6">✓ Saved</div>
+            </div>
+        </div>
+        <div class="exercise-card" onclick="toggleCard(this)">
+            <div class="exercise-header"><span class="exercise-title">Planche</span><span class="exercise-meta">Handstand</span></div>
+            <div class="exercise-details"><strong>Progression 1:</strong> Tuck | <strong>Progression 2:</strong> Straddle / 1 leg tuck</div>
+            <div class="input-panel" onclick="event.stopPropagation();">
+                <textarea class="note-textarea" rows="2" placeholder="Tracking details..." oninput="saveNote('cali_7', this.value)"></textarea>
+                <div class="saved-badge" id="badge_cali_7">✓ Saved</div>
+            </div>
+        </div>
+
+        <div class="section-subtitle">Plyometrics & Power</div>
+        <div class="exercise-card" onclick="toggleCard(this)">
+            <div class="exercise-header"><span class="exercise-title">Pogos + Box Jump</span><span class="exercise-meta">Plyos</span></div>
+            <div class="input-panel" onclick="event.stopPropagation();">
+                <textarea class="note-textarea" rows="2" placeholder="Tracking details..." oninput="saveNote('cali_8', this.value)"></textarea>
+                <div class="saved-badge" id="badge_cali_8">✓ Saved</div>
+            </div>
+        </div>
+        <div class="exercise-card" onclick="toggleCard(this)">
+            <div class="exercise-header"><span class="exercise-title">SL Pogo + Box Jump</span></div>
+            <div class="input-panel" onclick="event.stopPropagation();">
+                <textarea class="note-textarea" rows="2" placeholder="Tracking details..." oninput="saveNote('cali_9', this.value)"></textarea>
+                <div class="saved-badge" id="badge_cali_9">✓ Saved</div>
+            </div>
+        </div>
+        <div class="exercise-card" onclick="toggleCard(this)">
+            <div class="exercise-header"><span class="exercise-title">Bulgarian Jumps</span></div>
+            <div class="input-panel" onclick="event.stopPropagation();">
+                <textarea class="note-textarea" rows="2" placeholder="Tracking details..." oninput="saveNote('cali_10', this.value)"></textarea>
+                <div class="saved-badge" id="badge_cali_10">✓ Saved</div>
+            </div>
+        </div>
+        <div class="exercise-card" onclick="toggleCard(this)">
+            <div class="exercise-header"><span class="exercise-title">Up and Overs</span></div>
+            <div class="input-panel" onclick="event.stopPropagation();">
+                <textarea class="note-textarea" rows="2" placeholder="Tracking details..." oninput="saveNote('cali_11', this.value)"></textarea>
+                <div class="saved-badge" id="badge_cali_11">✓ Saved</div>
+            </div>
+        </div>
+        <div class="exercise-card" onclick="toggleCard(this)">
+            <div class="exercise-header"><span class="exercise-title">Depth Jump + High Jump</span></div>
+            <div class="input-panel" onclick="event.stopPropagation();">
+                <textarea class="note-textarea" rows="2" placeholder="Tracking details..." oninput="saveNote('cali_12', this.value)"></textarea>
+                <div class="saved-badge" id="badge_cali_12">✓ Saved</div>
+            </div>
+        </div>
+
+        <div class="section-subtitle">Bar Mechanics</div>
+        <div class="exercise-card" onclick="toggleCard(this)">
+            <div class="exercise-header"><span class="exercise-title">Muscle Up</span><span class="exercise-meta">Bar</span></div>
+            <div class="exercise-details"><strong>Progression 1:</strong> Pull up / Dip | <strong>Progression 2:</strong> Kip Up</div>
+            <div class="input-panel" onclick="event.stopPropagation();">
+                <textarea class="note-textarea" rows="2" placeholder="Tracking details..." oninput="saveNote('cali_13', this.value)"></textarea>
+                <div class="saved-badge" id="badge_cali_13">✓ Saved</div>
+            </div>
+        </div>
+        <div class="exercise-card" onclick="toggleCard(this)">
+            <div class="exercise-header"><span class="exercise-title">Front Lever</span></div>
+            <div class="input-panel" onclick="event.stopPropagation();">
+                <textarea class="note-textarea" rows="2" placeholder="Tracking details..." oninput="saveNote('cali_14', this.value)"></textarea>
+                <div class="saved-badge" id="badge_cali_14">✓ Saved</div>
+            </div>
+        </div>
+        <div class="exercise-card" onclick="toggleCard(this)">
+            <div class="exercise-header"><span class="exercise-title">OAPU</span></div>
+            <div class="input-panel" onclick="event.stopPropagation();">
+                <textarea class="note-textarea" rows="2" placeholder="Tracking details..." oninput="saveNote('cali_15', this.value)"></textarea>
+                <div class="saved-badge" id="badge_cali_15">✓ Saved</div>
+            </div>
+        </div>
+
+        <div class="section-subtitle">Pistol / Single Leg Strength</div>
+        <div class="exercise-card" onclick="toggleCard(this)">
+            <div class="exercise-header"><span class="exercise-title">Pistol Squat</span></div>
+            <div class="input-panel" onclick="event.stopPropagation();">
+                <textarea class="note-textarea" rows="2" placeholder="Tracking details..." oninput="saveNote('cali_16', this.value)"></textarea>
+                <div class="saved-badge" id="badge_cali_16">✓ Saved</div>
+            </div>
+        </div>
+        <div class="exercise-card" onclick="toggleCard(this)">
+            <div class="exercise-header"><span class="exercise-title">Dragon Squat</span></div>
+            <div class="input-panel" onclick="event.stopPropagation();">
+                <textarea class="note-textarea" rows="2" placeholder="Tracking details..." oninput="saveNote('cali_17', this.value)"></textarea>
+                <div class="saved-badge" id="badge_cali_17">✓ Saved</div>
+            </div>
+        </div>
+        <div class="exercise-card" onclick="toggleCard(this)">
+            <div class="exercise-header"><span class="exercise-title">Compass Taps</span></div>
+            <div class="input-panel" onclick="event.stopPropagation();">
+                <textarea class="note-textarea" rows="2" placeholder="Tracking details..." oninput="saveNote('cali_18', this.value)"></textarea>
+                <div class="saved-badge" id="badge_cali_18">✓ Saved</div>
+            </div>
+        </div>
+
+        <button class="btn-clear" onclick="clearAllNotes()">Reset All Notes</button>
+    </div>
+
+    <div id="view-push" class="hidden">
+        <header>
+            <button class="btn-back" onclick="switchView('view-home')">← Back</button>
+            <h1>Push x Legs</h1>
+        </header>
+
+        <div class="section-subtitle">Heavy Compounds (4 x 4)</div>
+        <div class="exercise-card" onclick="toggleCard(this)">
+            <div class="exercise-header"><span class="exercise-title">Bench Press</span><span class="exercise-meta
